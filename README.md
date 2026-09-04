@@ -2,6 +2,32 @@
 
 DeepSeek Harness 本地插件集合。本仓库用于统一管理和分发 DSH 的自定义插件，后续新增插件均追加至此仓库。
 
+## v1.3.0：归档删除修复
+
+[下载 Release](../../releases/tag/v1.3.0) · 归档面板 **0.2.1** · 对应独立插件 **0.4.1**
+
+本次修复历史恢复和分叉会话误报 `session-live`、删除等待写入时卡住、日志或展示缓存残留。面板支持搜索、工作区筛选、更新时间排序、删除确认、防重复提交及失败重试。
+
+### 更新归档插件
+
+重新运行下方归档插件安装命令，或下载 Release 中的 `dsh-ui-archived-local-0.2.1.tar.gz`，解压覆盖 profile 下的 `local-plugins/dsh-ui-archived-local/`。本地依赖和 composition 配置见后文。
+
+**安装脚本仅更新插件，不会自动修复 Host。** 根据 [补丁说明](dsh-ui-archived-local/patches/README.md) 选择：
+
+| Host 当前状态 | 应用的补丁 |
+|---|---|
+| 已应用独立插件 0.4.0 的完整后端补丁 | 仅 `deleteSession-0.4.1.diff` |
+| fork 基线 `8eb6aa069af605a3d6277dc301190ddeea3bb972` | 更新后的 `deleteSession-complete.diff` 与测试补丁 |
+| 其他版本 | 迁移匹配的改动，先运行 `git apply --check` |
+
+应用后执行 `pnpm run build:lib:host`，**重启 DSH Host，再刷新浏览器**。不要叠加完整补丁和增量升级补丁。运行中的会话仍需先完成或停止；删除不操作项目工作目录和用户导出的文件。
+
+Release 提供已构建的本地插件、后端补丁及 `SHA256SUMS`。真实 Web 测试覆盖新建、恢复历史、分叉三条删除路径；JSONL / SQLite 测试覆盖删除后重新打开存储。
+
+### English upgrade note
+
+Release **v1.3.0** includes archive panel **0.2.1**, corresponding to standalone panel **0.4.1**. It fixes false ownership rejection for resumed/forked sessions, deletion deadlocks and persistent checkpoint residue. Updating the frontend is insufficient: apply the matching [Host patch](dsh-ui-archived-local/patches/README.md), rebuild, restart DSH and reload the browser. Use the incremental patch only when 0.4.0 is already applied. Release assets include the built local plugin and checksums.
+
 ## 快速安装
 
 ### 安装单个插件
